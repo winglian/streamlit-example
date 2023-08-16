@@ -13,8 +13,13 @@ st.title("💬 OpenAccess AI Collective Chat")
 
 # Function for generating LLM response
 def generate_response():
-    response = openai.ChatCompletion.create(model=openai_api_model, messages=st.session_state.messages)
-    return response.choices[0].message
+    # response = openai.ChatCompletion.create(model=openai_api_model, messages=st.session_state.messages)
+    prompt = ""
+    for message in st.session_state.messages:
+        prompt += f"<|im_start|>{message['role']}\n{message['content']}\n"
+    prompt += "<|im_start|>assistant\n"
+    response = openai.Completion.create(model=openai_api_model, prompt=prompt, max_tokens=4096)
+    return response.choices[0].text
 
 
 # Store LLM generated responses
@@ -27,8 +32,8 @@ for message in st.session_state.messages:
         st.write(message["content"])
 
 # User-provided prompt
-if prompt := st.chat_input(disabled=not (openai_api_key and openai_api_base)):
-    if not openai_api_key or not openai_api_base:
+if prompt := st.chat_input(disabled=not openai_api_base):
+    if not openai_api_base:
         st.info("Please add your OpenAI API credentials to continue.")
         st.stop()
 
