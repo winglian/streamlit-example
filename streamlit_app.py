@@ -1,3 +1,5 @@
+import re
+import logging
 import streamlit as st
 import openai
 
@@ -18,8 +20,9 @@ def generate_response():
     for message in st.session_state.messages:
         prompt += f"<|im_start|>{message['role']}\n{message['content']}\n"
     prompt += "<|im_start|>assistant\n"
-    response = openai.Completion.create(model=openai_api_model, prompt=prompt, max_tokens=4096)
-    return response.choices[0].text
+    response = openai.Completion.create(model=openai_api_model, prompt=prompt, max_tokens=512, stream=True)
+    for chunk in response:
+        yield chunk["choices"][0]["text"]
 
 
 # Store LLM generated responses
@@ -47,9 +50,17 @@ if prompt := st.chat_input(disabled=not openai_api_base):
 # Generate a new response if last message is not from assistant
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        response = ""
         with st.spinner("Thinking..."):
-            response = generate_response()
-            st.write(response)
+            response_stream = generate_response()
+            for tokens in response_stream:
+                tokens = re.findall(r'(.*?)(\s|$)', tokens)
+                for subtoken in tokens:
+                    subtoken = "".join(subtoken)
+                    response += subtoken
+                    message_placeholder.markdown(response + "▌")
+        message_placeholder.markdown(response)
     message = {"role": "assistant", "content": response}
     st.session_state.messages.append(message)
 
