@@ -13,7 +13,7 @@ with st.sidebar:
 
     st.session_state['temperature'] = st.slider('Temperature:', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
     st.session_state['top_p'] = st.slider('Top P:', min_value=0.01, max_value=1.0, value=0.9, step=0.01)
-    st.session_state['top_k'] = st.slider('Top k:', min_value=0.0, max_value=100, value=40, step=1.0)
+    st.session_state['top_k'] = st.slider('Top k:', min_value=0, max_value=100, value=40, step=1)
     st.session_state['max_seq_len'] = st.slider('Max Sequence Length:', min_value=64, max_value=4096, value=512, step=8)
     st.session_state['repetition_penalty'] = st.slider('Repetition Penalty:', min_value=0.0, max_value=2.0, value=1.1, step=0.1)
 
