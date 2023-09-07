@@ -43,6 +43,7 @@ def generate_response():
             else:
                 prompt += f"GPT4 Assistant: {message['content']}<|end_of_turn|>\n"
             prompt += "GPT4 Assistant: "
+    print(prompt)
     response = openai.Completion.create(
         model=openai_api_model,
         prompt=prompt,
