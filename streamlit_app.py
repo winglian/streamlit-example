@@ -6,7 +6,7 @@ import openai
 st.set_page_config(page_title="💬 OpenAccess AI Collective Chat")
 
 with st.sidebar:
-    openai_api_base = st.text_input("OpenAI API Base URL", key="chatbot_api_base", type="password")
+    openai_api_base = st.text_input("OpenAI API Base URL", key="chatbot_api_base")
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
     openai_api_model = st.text_input("Model NAme", key="chatbot_api_model")
     system_prompt = st.text_area("System Prompt", key="system_prompt")
