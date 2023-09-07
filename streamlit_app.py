@@ -33,10 +33,10 @@ def generate_response():
             prompt += "<|im_start|>assistant\n"
         elif prompt_style == "vicuna":
             if message['role'] == "user":
-                prompt += f"User: {message['content']}\n"
+                prompt += f"USER: {message['content']}\n"
             else:
-                prompt += f"Assistant: {message['content']}\n"
-            prompt += "Assistant: "
+                prompt += f"ASSISTANT: {message['content']}</s>\n"
+            prompt += "ASSISTANT:"
         elif prompt_style == "openchat":
             if message['role'] == "user":
                 prompt += f"GPT4 User: {message['content']}<|end_of_turn|>\n"
