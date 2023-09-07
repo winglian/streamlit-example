@@ -10,10 +10,11 @@ with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
     openai_api_model = st.text_input("Model NAme", key="chatbot_api_model")
     system_prompt = st.text_area("System Prompt", key="system_prompt")
+    prompt_style = st.selectbox("Prompt Style", ("chatml", "vicuna", "openchat"))
 
     st.session_state['temperature'] = st.slider('Temperature:', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
     st.session_state['top_p'] = st.slider('Top P:', min_value=0.01, max_value=1.0, value=0.9, step=0.01)
-    st.session_state['top_k'] = st.slider('Top k:', min_value=0, max_value=100, value=40, step=1)
+    st.session_state['top_k'] = st.slider('Top k:', min_value=0.0, max_value=100, value=40, step=1.0)
     st.session_state['max_seq_len'] = st.slider('Max Sequence Length:', min_value=64, max_value=4096, value=512, step=8)
     st.session_state['repetition_penalty'] = st.slider('Repetition Penalty:', min_value=0.0, max_value=2.0, value=1.1, step=0.1)
 
@@ -26,11 +27,22 @@ def generate_response():
     prompt = ""
     prompt += system_prompt + "\n"
     for message in st.session_state.messages:
-        if message['role'] == "user":
-            prompt += f"GPT4 User: {message['content']}<|end_of_turn|>"
-        else:
-            prompt += f"GPT4 Assistant: {message['content']}<|end_of_turn|>"
-    prompt += "GPT4 Assistant: "
+        if prompt_style == "chatml":
+            for message in st.session_state.messages:
+                prompt += f"<|im_start|>{message['role']}\n{message['content']}\n"
+            prompt += "<|im_start|>assistant\n"
+        elif prompt_style == "vicuna":
+            if message['role'] == "user":
+                prompt += f"User: {message['content']}\n"
+            else:
+                prompt += f"Assistant: {message['content']}\n"
+            prompt += "Assistant: "
+        elif prompt_style == "openchat":
+            if message['role'] == "user":
+                prompt += f"GPT4 User: {message['content']}<|end_of_turn|>\n"
+            else:
+                prompt += f"GPT4 Assistant: {message['content']}<|end_of_turn|>\n"
+            prompt += "GPT4 Assistant: "
     response = openai.Completion.create(
         model=openai_api_model,
         prompt=prompt,
