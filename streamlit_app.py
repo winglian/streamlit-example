@@ -29,7 +29,7 @@ def generate_response():
     for message in st.session_state.messages:
         if prompt_style == "chatml":
             for message in st.session_state.messages:
-                prompt += f"<|im_start|>{message['role']}\n{message['content']}\n"
+                prompt += f"<|im_start|>{message['role']}\n{message['content']}<|im_end|>\n"
             prompt += "<|im_start|>assistant\n"
         elif prompt_style == "vicuna":
             if message['role'] == "user":
