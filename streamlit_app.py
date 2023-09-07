@@ -30,7 +30,7 @@ def generate_response():
         if prompt_style == "chatml":
             for message in st.session_state.messages:
                 prompt += f"<|im_start|>{message['role']}\n{message['content']}<|im_end|>\n"
-            prompt += "<|im_start|>assistant\n"
+            prompt += "<|im_start|>assistant"
         elif prompt_style == "vicuna":
             if message['role'] == "user":
                 prompt += f"USER: {message['content']}\n"
@@ -43,7 +43,6 @@ def generate_response():
             else:
                 prompt += f"GPT4 Assistant: {message['content']}<|end_of_turn|>\n"
             prompt += "GPT4 Assistant: "
-    print(prompt)
     response = openai.Completion.create(
         model=openai_api_model,
         prompt=prompt,
