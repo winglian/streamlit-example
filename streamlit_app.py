@@ -23,6 +23,11 @@ st.title("💬 OpenAccess AI Collective Chat")
 
 # Function for generating LLM response
 def generate_response():
+    client = openai.OpenAI(
+        base_url=openai_api_base,
+        api_key=openai_api_key,
+    )
+
     # response = openai.ChatCompletion.create(model=openai_api_model, messages=st.session_state.messages)
     prompt = ""
     prompt += system_prompt + "\n"
@@ -43,15 +48,13 @@ def generate_response():
             else:
                 prompt += f"GPT4 Assistant: {message['content']}<|end_of_turn|>\n"
             prompt += "GPT4 Assistant: "
-    response = openai.Completion.create(
+    response = client.chat.completions.create(
+        messages=st.session_state.messages,
         model=openai_api_model,
-        prompt=prompt,
         stream=True,
         temperature=st.session_state['temperature'],
         max_tokens=st.session_state['max_seq_len'],
         top_p=st.session_state['top_p'],
-        top_k=st.session_state['top_k'],
-        repetition_penalty=st.session_state['repetition_penalty'],
     )
     for chunk in response:
         yield chunk["choices"][0]["text"]
