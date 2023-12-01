@@ -57,7 +57,8 @@ def generate_response():
         top_p=st.session_state['top_p'],
     )
     for chunk in response:
-        yield chunk["choices"][0]["text"]
+        if chunk["choices"][0].delta.content is not None:
+            yield chunk["choices"][0].delta.content
 
 
 # Store LLM generated responses
